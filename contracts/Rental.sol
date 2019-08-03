@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1;
+pragma solidity ^0.5.2;
 
 import {RentLib} from "./RentLib.sol";
 
@@ -26,21 +26,22 @@ contract Rental {
     
 
     function addNewItem(string memory name, bool isAvailable, address rentee,address owner,string memory date,
-    string memory faceId, string memory faceUrl, string memory itemUrl, bool repay, bool rent, unit256 priceInWei) public returns (uint) {
+    string memory faceId, string memory faceUrl, string memory itemUrl,bool repay ,bool rent, uint256 priceInWei) public returns (uint) {
         
         //Current # of items
         uint count = getItemCount();
         //Increment Count
         //Construct Car Object
         
-        RentLib.Item memory newItem = RentLib.Item(name,true,0x0,0x0,date, faceId, faceUrl, itemUrl, false, false, priceInWei);
+        RentLib.Item memory newItem = RentLib.Item(name,true,address(0),address(0),date, faceId, faceUrl, itemUrl, false, false, priceInWei, count);
+        
         
         //Add to Array
         rentals.push(newItem);
         
          return count;
     }
-}
+
 
     
 // Getting the getters
@@ -57,7 +58,7 @@ function getCurrentOccupant(uint _item) view public returns(address) {
     return rentals[_item].rentee;
 }
 
-function 
+
 
 
 
@@ -82,13 +83,13 @@ function
 
 
 function rentItem(uint8 _item) public payable returns(uint256) {
-    rentals storage itemToBeRented = rentals[_item]
+    RentLib.Item storage itemToBeRented = rentals[_item];
 
        itemToBeRented.rentee = msg.sender;
        itemToBeRented.rent = false;
        itemToBeRented.repay = true;
     if (msg.value % rentals[_item].priceInWei == 0 && msg.value > 0 && rentals[_item].isAvailable == true) {
-        uint256 numberOfDaysPaid = msg.value / rentee[_item].priceInWei;
+        uint256 numberOfDaysPaid = msg.value / rentals[_item].priceInWei;
         rentals[_item].isAvailable = false;
         owner.transfer(msg.value);
         return numberOfDaysPaid;
@@ -101,7 +102,7 @@ revert();
 function returnItem(uint _item) public  returns (bool) {
         
         //Get Specific car
-        rentals._item storage itemToReturn = rentals[_item];
+         RentLib.Item storage itemToReturn = rentals[_item];
         require(itemToReturn.owner == msg.sender);
 
         itemToReturn.rent = true;
@@ -111,11 +112,12 @@ function returnItem(uint _item) public  returns (bool) {
         //Make car available again
         itemToReturn.isAvailable = true;
         //Remove previous rentee
-        itemToReturn.rentee = 0x0;
+        itemToReturn.rentee = address(0);
         
         //Return Success
         return true;
     }
+}
 
 
 
