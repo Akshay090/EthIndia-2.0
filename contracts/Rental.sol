@@ -3,13 +3,12 @@ pragma solidity ^0.5.2;
 import {RentLib} from "./RentLib.sol";
 
 contract Rental {
+ 
 
-   
-
-     address payable owner;
+ address payable owner;
  address payable rentee;
 
-
+// address NullAddress = address(0);
 
    modifier ownerOnly() {
     require(msg.sender == owner);
@@ -26,14 +25,14 @@ contract Rental {
     
 
     function addNewItem(string memory name, bool isAvailable, address rentee,address owner,string memory date,
-    string memory faceId, string memory faceUrl, string memory itemUrl,bool repay ,bool rent, uint256 priceInWei) public returns (uint) {
+    string memory faceId, string memory itemUrl ,uint256 priceInWei) public returns (uint) {
         
         //Current # of items
         uint count = getItemCount();
         //Increment Count
         //Construct Car Object
         
-        RentLib.Item memory newItem = RentLib.Item(name,true,address(0),address(0),date, faceId, faceUrl, itemUrl, false, false, priceInWei, count);
+        RentLib.Item memory newItem = RentLib.Item(name,true,address(0),owner,date, faceId, itemUrl, priceInWei, count);
         
         
         //Add to Array
@@ -86,27 +85,28 @@ function rentItem(uint8 _item) public payable returns(uint256) {
     RentLib.Item storage itemToBeRented = rentals[_item];
 
        itemToBeRented.rentee = msg.sender;
-       itemToBeRented.rent = false;
-       itemToBeRented.repay = true;
-    if (msg.value % rentals[_item].priceInWei == 0 && msg.value > 0 && rentals[_item].isAvailable == true) {
+      //  itemToBeRented.rent = false;
+              rentals[_item].isAvailable = false;
+
+     if ( rentals[_item].isAvailable == false) {
         uint256 numberOfDaysPaid = msg.value / rentals[_item].priceInWei;
         rentals[_item].isAvailable = false;
         owner.transfer(msg.value);
         return numberOfDaysPaid;
     } else {
-revert();
+
   return 0;
     }
 }   
 
-function returnItem(uint _item) public  returns (bool) {
+function returnItem(uint8 _item) public  returns (bool) {
         
         //Get Specific car
          RentLib.Item storage itemToReturn = rentals[_item];
-        require(itemToReturn.owner == msg.sender);
+        itemToReturn.owner == msg.sender;
 
-        itemToReturn.rent = true;
-        itemToReturn.repay = false;
+        // itemToReturn.rent = true;
+
 
         // msg.sender == itemToReturn.owner;
         //Make car available again
