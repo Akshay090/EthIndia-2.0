@@ -1,0 +1,24 @@
+.card {
+  border: 1px solid #d3d3d3;
+  border-radius: 0.25rem;
+}
+
+.bg-img {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  height: 300px;
+  background-color: #ccc;
+}
+
+.content {
+  padding: 8px;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid #2196f3;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
