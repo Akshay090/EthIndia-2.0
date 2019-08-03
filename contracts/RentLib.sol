@@ -1,5 +1,6 @@
 pragma solidity ^0.5.1;
 
+
 library RentLib {
     //This library contains helps create Item Objects for Rental Contracts
     struct Item {
@@ -11,6 +12,10 @@ library RentLib {
         string faceId; // string of azure face id
         string  faceUrl; // face image url cloudinary
         string  itemUrl; // item image url cloudinary
-        uint itemId; // index of item to be rented 
+        uint itemId;
+        bool repay;
+        bool rent; // index of item to be rented 
+        uint256 priceInWei;
+
     }
 }
